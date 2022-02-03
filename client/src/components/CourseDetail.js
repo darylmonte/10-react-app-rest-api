@@ -82,9 +82,7 @@ const CourseDetail = ()=> {
                                 <p>{courseDetails.estimatedTime}</p>
 
                                 <h3 className="course--detail--title">Materials Needed</h3>
-                                <ul className="course--detail--list">
-                                <ReactMarkdown>{ courseDetails.materialsNeeded }</ReactMarkdown>
-                                </ul>  
+                                <ReactMarkdown className="course--detail--list">{ courseDetails.materialsNeeded }</ReactMarkdown>
                             </div>
                         </div>
                     </form>
