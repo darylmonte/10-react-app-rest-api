@@ -9,28 +9,38 @@ const UpdateCourse = () => {
   let history = useHistory();
   const { id } = useParams();
   const authUser = context.authenticatedUser;
-  const [title, setTitle] = useState();
-  const [description, setDescription] = useState();
-  const [estimatedTime, setEstimatedTime] = useState();
-  const [materialsNeeded, setMaterialsNeeded] = useState();
-  const [userId,   ] = useState(context.authenticatedUser.userId);
+  const [title, setTitle] = useState('');
+  const [description, setDescription] = useState('');
+  const [estimatedTime, setEstimatedTime] = useState('');
+  const [materialsNeeded, setMaterialsNeeded] = useState('');
+  const [firstName, setFirstName] = useState('');
+	const [lastName, setLastName] = useState('');
+  // const [userId] = useState(context.authenticatedUser.userId);
   const [errors, setErrors] = useState([]);
-  const [courseDetails, setCourseDetails] = useState('');
+  // const [courseDetails, setCourseDetails] = useState('');
     
   // sets state of course details and handles errors routes
   useEffect(() => {
     context.data.getCourse(id)
-      .then(courseDetails => {
-        if(!courseDetails.id) {
+      .then(response => {
+        if(response.message) {
           history.push('/notfound')
-        } else if (authUser.userId !== courseDetails.userId) {
+        } else if (response.userId !== authUser.id) {
           history.push('/forbidden');
         } else {
-          setCourseDetails(courseDetails)
+          setTitle(response.title);
+					setDescription(response.description);
+					setEstimatedTime(response.estimatedTime);
+					setMaterialsNeeded(response.materialsNeeded);
+					setFirstName(response.User.firstName);
+					setLastName(response.User.lastName);
         } 
       })
-      .catch(err => history.push('/error') );
-  }, [context.data, history, id, authUser.id, authUser.userId, userId ])
+      .catch(err => {
+        console.error(err);
+        history.push('/error');  
+      });
+  }, [context, history, id])
    
   // updates elements values on change event
   const change = (e) => {
@@ -50,22 +60,20 @@ const UpdateCourse = () => {
   // Submit function that updates course associated with authenticated user and handles errors redirects 
   const submit = () => {
 
-    const courseDetails = {
+    const course = {
       title,
       description,
       estimatedTime,
-      materialsNeeded,
-      userId,
-      errors
+      materialsNeeded
     };
     
-    context.data.updateCourse(courseDetails, id, authUser.emailAddress, authUser.password)
-      .then( errors => {
-        if(errors.length) {
-          setErrors(errors)
+    context.data.updateCourse(course, id, authUser.emailAddress, authUser.password)
+      .then( response => {
+        if(response.length) {
+          setErrors(response);
         } else {
           console.log("Course was successfully updated!");
-          history.push('/')
+          history.push(`/courses/${id}`)
         }
       })
       .catch(err => {
@@ -77,7 +85,7 @@ const UpdateCourse = () => {
   }
   
   const cancel = () =>{
-    history.push(`/courses/${courseDetails.id}`);
+    history.push(`/courses/${id}`);
   }
 
   return (
@@ -99,17 +107,17 @@ const UpdateCourse = () => {
                           id="courseTitle"
                           name="courseTitle"
                           type="text" 
-                          defaultValue={courseDetails.title}
+                          defaultValue={title}
                           onInput= { change }
                         />
 
-                        <p>By {authUser.firstName} {authUser.lastName}</p>
+                        <p>By {firstName} {lastName}</p>
 
                         <label htmlFor="courseDescription">Course Description</label>
                         <textarea 
                           id="courseDescription"  
                           name="courseDescription" 
-                          defaultValue= {courseDetails.description}
+                          defaultValue= {description}
                           onInput= { change }    
                         />
                       </div>
@@ -119,7 +127,7 @@ const UpdateCourse = () => {
                           id="estimatedTime" 
                           name="estimatedTime" 
                           type="text"
-                          defaultValue={courseDetails.estimatedTime}
+                          defaultValue={estimatedTime}
                           onChange={change} 
                         />
           
@@ -127,7 +135,7 @@ const UpdateCourse = () => {
                         <textarea 
                           id="materialsNeeded" 
                           name="materialsNeeded"
-                          defaultValue={courseDetails.materialsNeeded} 
+                          defaultValue={materialsNeeded} 
                           onChange={change}
                         />
                       </div>

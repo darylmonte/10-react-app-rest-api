@@ -1,5 +1,5 @@
 import React, {  useState, useContext } from 'react';
-import { useHistory } from 'react-router-dom';
+import { useHistory, useLocation } from 'react-router-dom';
 import  { Context }  from '../Context';
 import Form from './Form';
 
@@ -7,12 +7,14 @@ const CreateCourse = () => {
 
    const context = useContext(Context);
    let history = useHistory();
+   const location = useLocation();
+   const { from } = location.state || { from: { pathname: "/" } }
    const authUser = context.authenticatedUser;
-   const [title, setTitle] = useState();
-   const [description, setDescription] = useState();
-   const [estimatedTime, setEstimatedTime] = useState();
-   const [materialsNeeded, setMaterialsNeeded] = useState();
-   const [userId] = useState(context.authenticatedUser.userId);
+   const [title, setTitle] = useState('');
+   const [description, setDescription] = useState('');
+   const [estimatedTime, setEstimatedTime] = useState('');
+   const [materialsNeeded, setMaterialsNeeded] = useState('');
+   // const [userId] = useState(context.authenticatedUser.userId);
    const [errors, setErrors] = useState([]);
 
   const change = (e) => {
@@ -30,24 +32,23 @@ const CreateCourse = () => {
   }
 
   // creates new course associated with authenticated user
-  const submit = () => {
-
-    const courseDetails = {
+  const submit = (e) => {
+    
+    const course = {
       title,
       description,
       estimatedTime,
       materialsNeeded,
-      userId,
-      errors
+      userId: authUser.id
     };
     
-    context.data.createCourse(courseDetails, authUser.emailAddress, authUser.password)
+    context.data.createCourse(course, authUser.emailAddress, authUser.password)
       .then( errors => {
         if(errors.length) {
           setErrors(errors);
         } else {
           console.log("Course was successfully created!");
-          history.push('/')
+          history.push("/");
         }
       })
       .catch(err => {
@@ -57,8 +58,8 @@ const CreateCourse = () => {
   }
   
   // return back to main page when button is clicked
-  const cancel = () =>{
-    history.push('/');
+  const cancel = () => {
+    history.push(from);
   }
 
   return (
