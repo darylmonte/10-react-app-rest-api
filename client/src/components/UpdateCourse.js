@@ -25,7 +25,7 @@ const UpdateCourse = () => {
       .then(response => {
         if(response.message) {
           history.push('/notfound')
-        } else if (response.userId !== authUser.id) {
+        } else if (response.User.emailAddress !== authUser.emailAddress) {
           history.push('/forbidden');
         } else {
           setTitle(response.title);

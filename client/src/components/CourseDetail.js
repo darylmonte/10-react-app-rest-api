@@ -18,6 +18,7 @@ const CourseDetail = ()=> {
             if(response.message) {
                 history.push('/notfound');
             } else {
+                console.log(response);
                 setCourseDetail(response);
                 setUser(response.User);
             }
@@ -51,13 +52,12 @@ const CourseDetail = ()=> {
             });
     };
 
-   
     return (
         <>
             <main>
                 <div className="actions--bar">
                     <div className="wrap">
-                        { authUser && courseDetail.userId === authUser.userId 
+                        { authUser && user.emailAddress === authUser.emailAddress 
                         ? ( 
                         <React.Fragment>
                         <Link className="button" to={`/courses/${courseDetail.id}/update`}>Update Course</Link> 
@@ -77,7 +77,7 @@ const CourseDetail = ()=> {
                                 <h3 className="course--detail--title">Course</h3>
                                 <h4 className="course--name">{courseDetail.title}</h4>
                                 <p> By {user.firstName} {user.lastName}</p>
-                                <p> {courseDetail.description} </p>
+                                <ReactMarkdown children={courseDetail.description} /> 
                             </div>
 
                             <div>

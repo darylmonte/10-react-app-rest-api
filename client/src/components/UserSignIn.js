@@ -60,21 +60,22 @@ const UserSignIn = () => {
             submitButtonText = "Sign In"
             elements= {() => (
               <React.Fragment>
+                <label htmlFor="emailAddress">Email Address</label>
                 <input
                   id="emailAddress"
                   name="emailAddress"
                   type="text"
                   value= {emailAddress}
                   onChange={change}
-                  placeholder= "Email Address"
                 />
+
+                <label htmlFor="password">Password</label>
                 <input
                   id="password"
                   name="password"
                   type="password"
                   value= {password}
                   onChange={change}
-                  placeholder= "Password" 
                 />
               </React.Fragment>
             )}
